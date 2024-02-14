@@ -4,19 +4,29 @@ Require Export UniMath.Foundations.All.
 
 Theorem comp_app { P Q R : UU } (f : P → Q) (g : Q → R) (p : P) : R.
 Proof.
-  Admitted.
+  apply g.
+  apply f.
+  exact p.
+Qed.
 
 (* Exercise 2 *)
 
 Theorem curried_proj {P Q R : UU} : (P → (Q × R)) → (P → Q).
 Proof.
-  Admitted.
+  intros pToQR p.
+  induction (pToQR p) as [q _].
+  exact q.
+Qed.
 
 (* Exercise 3 *)
 
 Theorem exp : nat → nat → nat.
 Proof.
-  Admitted.
+  intros base e.
+  induction e as [| _ IH].
+  exact 1.
+  exact (IH * base).
+Defined.
 
 
 Compute (exp 5 1).
