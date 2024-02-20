@@ -38,23 +38,58 @@ Compute (exp 3 2).
 (* Exercise 4 *)
 
 Search (∏ X Y : UU, ∏ f : X → Y, ∏ x y : X, x = y → (f x) = (f y)).
+(*
+maponpaths:
+  ∏ {T1 T2 : UU} (f : T1 → T2) {t1 t2 : T1},
+  t1 = t2 → f t1 = f t2
+*)
 
 (* This command searches the library for functions of this type. You should see in the output that ~maponpaths~ is of this type. You can then print ~maponpaths~ (i.e. write "Print maponpaths.") to see the definition.
 
 You can use this to find other lemmas from the library. You can use any facts without proof from the library about addition and multiplication as well as ~maponpaths~.*)
 
+Search (forall m : nat, m * 1 = m).
+(* natmultr1: ∏ n : nat, n * 1 = n *)
+Search (forall m n : nat, S (m + n) = m + S n ).
+(* plus_n_Sm: ∏ n m : nat, S (n + m) = n + S m *)
+Search (forall m n l : nat, (m * n) * l = m * (n * l)).
+(* natmultassoc: ∏ n m k : nat, n * m * k = n * (m * k) *)
 Theorem exp_hom {l m n : nat} : exp l (m + n) = (exp l m) * (exp l n).
 Proof.
-  Admitted.
+  induction n as [|n IH].
+  - simpl.
+    transitivity (exp l m).
+    + apply maponpaths.
+      exact (natplusr0 m).
+    + admit. (* symmetry. apply (natmultr1 (exp l m)). *)
+  - simpl.
+    transitivity (exp l (m + n) * l).
+    + transitivity (exp l (S (m + n))).
+      * apply maponpaths.
+        symmetry.
+        apply plus_n_Sm.
+      * reflexivity.
+    + transitivity ((exp l m * exp l n) * l).
+      * apply (maponpaths (fun n : nat => n * l)).
+        exact IH.
+      * apply natmultassoc.
+Qed.
 
 (* Exercise 5 *)
 
 Lemma path_combination {A : UU} {a a' b : A} (p : a = b) (q: a' = b) : a = a'.
 Proof.
-    Admitted.
+  transitivity b.
+  exact p.
+  symmetry.
+  exact q.
+Defined.
 
 (* Exercise 6 *)
 
 Lemma path_combination_fact {A : UU} {a b : A} (p : a = b) : idpath a = path_combination p p.
 Proof.
-    Admitted.
+  induction p.
+  unfold path_combination.
+  reflexivity.
+Qed.
