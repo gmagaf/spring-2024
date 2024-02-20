@@ -61,7 +61,7 @@ Defined.
 (*Exercise 4*)
 
 Definition add : nat → nat → nat.
-Proof. 
+Proof.
     intro n.
     intro m.
     induction m.
@@ -79,22 +79,41 @@ Print add.
 
 (* Exercise 5 *)
 
+About empty.
+About unit.
+Print unit.
+About bool.
+Print bool.
 Definition boolRep : bool → UU.
-(* Send false to empty, the type with no constructors and true to unit, the type with one constructor. *)
+(* Send false to empty, the type with no constructors and true to unit,
+   the type with one constructor. *)
 Proof.
-  Admitted.
+  intro b.
+  induction b.
+  exact unit.
+  exact empty.
+Defined.
 
 (* Exercise 6 *)
 
 Definition ι : bool → nat.
 Proof.
-  Admitted.
+  intro b.
+  induction b.
+  exact 1.
+  exact 0.
+Defined.
+Print ι.
 
 (* Exercise 7 *)
 
 Definition mod2 : nat → bool.
 Proof.
-  Admitted.
+  intro n.
+  induction n as [| n IH].
+  - exact false.
+  - exact (not IH).
+Defined.
 
 Compute (mod2 15).
 (* Should be true (aka 1) *)
@@ -105,7 +124,12 @@ Compute (mod2 20).
 
 Definition mult : nat → nat → nat.
 Proof.
-  Admitted.
+  intro n.
+  intro m.
+  induction m as [| m IH ].
+  - exact 0.
+  - exact (add IH n).
+Defined.
 
 Compute (mult 2 3).
 
@@ -113,7 +137,15 @@ Compute (mult 2 3).
 
 Definition leq : nat → nat → bool.
 Proof.
-  Admitted.
+  intro n.
+  induction n as [| n nleq ].
+  - intro.
+    exact true.
+  - intro m.
+    induction m as [| m _ ].
+    exact false.
+    exact (nleq m).
+Defined.
 
 Compute (leq 0 0).
 Compute (leq 0 1).
@@ -126,9 +158,18 @@ Compute (leq 3 2).
       
 (* Exercise 10 *)
 
+About boolRep.
+Print boolRep.
+Search (∏ X : UU, ∏ Y : X → UU, ∏ x y : X, x = y → Y x → Y y).
 Theorem leqrefl : ∏ (n : nat) , boolRep (leq n n).
 Proof.
-  Admitted.
+  intro n.
+  induction n as [| n IH ].
+  exact tt.
+  apply (transportf boolRep (x:=leq n n)).
+  reflexivity.
+  exact IH.
+Qed.
 
 (* Exercise 11 *)
 
@@ -136,10 +177,25 @@ Proof.
 Define ≤ inductively as:
 Inductive leqUU : nat → nat → UU := ...
 *)
+Inductive leqUU : nat → nat → UU :=
+| zleqn (n : nat) : leqUU 0 n
+| sleqs (n : nat) (m : nat) : leqUU n m → leqUU (S n) (S m).
 
 Theorem leqbooltotype : ∏ (n m : nat) , boolRep (leq n m) → leqUU n m.
 Proof.
-  Admitted.
+  intro n.
+  induction n as [| n IH ].
+  - intros.
+    exact (zleqn m).
+  - intro  m.
+    intro SnleqMProp.
+    induction m as [| m _ ].
+    + induction SnleqMProp.
+    + apply sleqs.
+      apply IH.
+      simpl in SnleqMProp.
+      exact SnleqMProp.
+Qed.
 
 
 
