@@ -50,6 +50,8 @@ You can use this to find other lemmas from the library. You can use any facts wi
 
 Search (forall m : nat, m * 1 = m).
 (* natmultr1: ∏ n : nat, n * 1 = n *)
+Search (forall n m : nat, n * m = m * n).
+(* natmultcomm: ∏ n m : nat, n * m = m * n *)
 Search (forall m n : nat, S (m + n) = m + S n ).
 (* plus_n_Sm: ∏ n m : nat, S (n + m) = n + S m *)
 Search (forall m n l : nat, (m * n) * l = m * (n * l)).
@@ -61,7 +63,10 @@ Proof.
     transitivity (exp l m).
     + apply maponpaths.
       exact (natplusr0 m).
-    + admit. (* symmetry. apply (natmultr1 (exp l m)). *)
+    + transitivity (1 * exp l m). (* symmetry. apply (natmultr1 (exp l m)). *)
+      * simpl.
+        reflexivity.
+      * apply natmultcomm.
   - simpl.
     transitivity (exp l (m + n) * l).
     + transitivity (exp l (S (m + n))).
