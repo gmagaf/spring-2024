@@ -63,10 +63,8 @@ Proof.
     transitivity (exp l m).
     + apply maponpaths.
       exact (natplusr0 m).
-    + transitivity (1 * exp l m). (* symmetry. apply (natmultr1 (exp l m)). *)
-      * simpl.
-        reflexivity.
-      * apply natmultcomm.
+    + rewrite (natmultr1 (exp l m)).
+      reflexivity.
   - simpl.
     transitivity (exp l (m + n) * l).
     + transitivity (exp l (S (m + n))).
