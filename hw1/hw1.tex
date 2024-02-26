@@ -1,0 +1,141 @@
+\documentclass[10pt]{article}
+\usepackage{amssymb, amsthm, amsmath}
+\usepackage{tikz-cd}
+\usepackage[shortlabels]{enumitem}
+
+\input{../latex_macros}
+\newtheorem{exercise}{Exercise}
+
+\title{Homotopy Type Theory 2023-2024\\
+       Assignment 1
+      }
+\date{\today}
+\author{George Magafossis \\
+University of Amsterdam \\
+UvA id: 14686996 \\
+\texttt{george.magkafosis@student.uva.nl}}
+
+\begin{document}
+
+\maketitle
+
+\begin{exercise}
+Consider types $P, Q, R$ and terms $f : P \to Q$,
+$g : Q \to R$ and $p : P$. Then we can construct
+a term in $R$.
+\begin{proof}
+We can apply $f$ to $p$ to get a term $f \; p$ in $Q$
+and then apply $g$ to that, to get a term $g (f \; p) : R$.
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Consider types $P, Q, R$. Then
+$(P \to (Q \times R)) \to (P \to Q)$.
+\begin{proof}
+In order to construct a function term of type
+$(P \to (Q \times R)) \to (P \to Q)$ we will use
+lambda abstraction twice. Suppose we have a term
+$f : P \to Q \times R$ and a term $p : P$.
+By applying $f$ to $p$ we get a term $qr : Q \times R$.
+By projecting out the first component of $qr$
+we get a term of type $Q$.
+\end{proof}
+\end{exercise}
+
+
+\begin{exercise}
+Define the exponential function
+$\exp : \nat \to \nat \to \nat$.
+\begin{proof}
+We will define $\exp$ inductively on the
+second argument: the exponent. So, assume that
+we have $n, e : \nat$. By induction on $e$
+we need to provide a term in $\nat$
+for when $e = 0$. We choose $1 : \nat$
+as the intended behavior is $\exp \; n \; 0 \doteq 1$.
+Now, suppose we have a term $h : \nat$, the
+value of the function $\exp \; n \; e$.
+We need to provide a term in $\nat$ which should
+correspond to $\exp \; n \; (S \; e)$. We give
+$h * n$. So, by lambda abstractions we have defined:
+\[
+ \exp := \lambda n : \nat, \lambda e : \nat, \ind_\nat(1, [e', h].h*n) : \nat \to \nat \to \nat
+\]
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Given $l, m, n : nat$ we need to prove that
+$\exp \; l \; (m + n) = (\exp \; l \; m) * (\exp \; l \; n)$.
+\begin{proof}
+We can prove this by induction on $n : \nat$.
+If $n = 0$ we need to show
+$\exp \; l \; (m + 0) = (\exp \; l \; m) * (\exp \; l \; 0)$.
+By definition of $\exp$ this is the same as
+$\exp \; l \; (m + 0) = (\exp \; l \; m) * 1$. We know that
+$m + 0 = m$ and so, we can (by applying maponpaths)
+simplify to $\exp \; l \; m = (\exp \; l \; m) * 1$.
+Also, we know that $k * 1 = k$ for any $k : \nat$, so
+we need to show $\exp \; l \; m = (\exp \; l \; m)$
+which is trivially true.
+
+Now, suppose that we have a proof $H$ of
+$\exp \; l \; (m + n) = (\exp \; l \; m) * (\exp \; l \; n)$.
+We need to prove that the same equation holds for
+$S \; n$. Again, by definition of $\exp$ we have
+$\exp \; l \; (S \; n) \doteq (\exp \; l \; n) * l$.
+So, we will show two equalities and use the transitivity
+of equality. First we will prove
+\[
+ \exp \; l \; (m + (S \; n)) = (\exp \; l \; (m + n)) * l
+\]
+and then
+\[
+ (\exp \; l \; (m + n)) * l = (\exp \; l \; m) * ((\exp \; l \; n) * l)
+\]
+The first equality holds as
+\begin{align*}
+ &\exp \; l \; (m + (S \; n)) = \text{ (by maponpaths and $m + (S \; n) = S(m + n)$)}\\
+ &\exp \; l \; (S \; (m + n)) = \text{ (by defintion)} \\
+ &(\exp \; l \; (m + n)) * l
+\end{align*}
+For the second equation we use $H$ to show that
+\[
+ (\exp \; l \; (m + n)) * l = ((\exp \; l \; m) * (\exp \; l \; n)) * l
+\]
+and then by associativity of the multiplication
+on the natural numbers we get
+\[
+ (\exp \; l \; (m + n)) * l = (\exp \; l \; m) * ((\exp \; l \; n) * l)
+\]
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Suppose we have two paths (proofs of identity type)
+in a type $A$: $p : a = b, q: a' = b$. We should construct
+a term $path\_combination \; p \; q: a = a'$.
+\begin{proof}
+First we can prove $b = a'$. This follows from the
+fact that equality is symmetric. So, we have
+$\sym{q} : b = a'$. Then, by transitivity
+we can get $\trans{p}{\sym{q}} : a = a'$.
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Assume we have a path $p : a = b$ between two
+terms of type $A$. Then, $\refl_a = path\_combination \; p \; p$
+\begin{proof}
+We can prove this by using path induction on $p$.
+So, we need to find a proof that
+\[
+ \refl_a = \trans{\refl_a}{\sym{\refl_a}}
+\]
+This is definitionaly true by the way we define
+$\sym{(-)}$ and $\trans{-}{-}$.
+\end{proof}
+\end{exercise}
+
+\end{document}
