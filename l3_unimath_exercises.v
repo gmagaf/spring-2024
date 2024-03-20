@@ -38,7 +38,6 @@ Defined.
 
 Definition right_unit (n : nat) : add n 0 = n.
 Proof.
-  apply idpath.
   induction n.
   - unfold add.
   apply idpath.
