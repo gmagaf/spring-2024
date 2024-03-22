@@ -135,12 +135,88 @@ Defined.
             sometimes simpl didn't work.
 *)
 
+About transportf.
+Definition EqSigma {A : UU} {B : A → UU} (s t : ∑ x : A, B x) :=
+  ∑ (a : pr1 s = pr1 t), (transportf B a (pr2 s) = pr2 t).
 
+Theorem reflexive_EqSigma {A : UU} {B : A → UU} (s : ∑ x : A, B x) : EqSigma s s.
+Proof.
+  use tpair.
+  reflexivity.
+  simpl.
+  reflexivity.
+Defined.
+
+Theorem pair_eq {A : UU} {B : A → UU} {s t : ∑ x : A, B x} : (s = t) → EqSigma s t.
+Proof.
+  intro p.
+  induction p.
+  apply reflexive_EqSigma.
+Defined.
+
+Lemma eq_pair {A : UU} {B : A → UU} {s1 t1 : A} {s2 : B s1} {t2 : B t1}
+  (p1 : s1 = t1) (p2 : (transportf B p1 s2) = t2) : (s1,,s2) = (t1,,t2).
+Proof.
+  induction p1.
+  induction p2.
+  reflexivity.
+Defined.
+
+Lemma pair_eq_eq_pair {A : UU} {B : A → UU} {s1 t1 : A} {s2 : B s1} {t2 : B t1}
+  (p1 : s1 = t1) (p2 : (transportf B p1 s2) = t2) : pair_eq (eq_pair p1 p2)= (p1,,p2).
+Proof.
+  induction p1.
+  induction p2.
+  reflexivity.
+Defined.
+
+Print weq.
+Print isweq.
+Theorem pair_eq_is_equiv {A : UU} {B : A → UU} (s t : (∑ x : A, B x)) : weq (s = t) (EqSigma s t).
+Proof.
+  use tpair.
+  exact pair_eq.
+  simpl.
+  unfold isweq.
+  intro pst.
+  use tpair.
+  - use tpair.
+    induction s as [s1 s2].
+    induction t as [t1 t2].
+    apply (eq_pair (pr1 pst) (pr2 pst)).
+    simpl.
+    apply pair_eq_eq_pair.
+  - simpl.
+    intro fibre.
+    induction fibre as [pst' pair_eq_pst'_is_pst].
+    induction pst'.
+    induction pair_eq_pst'_is_pst.
+    induction s as [s1 s2].
+    unfold pair_eq.
+    unfold pair_eq_eq_pair.
+    reflexivity.
+Defined.
 
 (* Exercise 8 *)
 
 (* Every contractible type is equivalent to the unit.*)
 
+Print isweq_iso.
 Theorem contr_equiv_unit {C : UU} {h : iscontr C} : C ≃ unit.
 Proof.
-    Admitted.
+  use tpair.
+  - intro c.
+    exact tt.
+  - simpl.
+    set (c := pr1 h).
+    set (cContr := pr2 h).
+    set (g := λ y : unit, c).
+    About isweq_iso.
+    apply (isweq_iso (λ _ : C, tt) g).
+    + intro cc.
+      symmetry.
+      apply (cContr).
+    + intro u.
+      induction u.
+      reflexivity.
+Qed.
