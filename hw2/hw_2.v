@@ -56,8 +56,7 @@ Definition comm_triangle {A B C : UU} (f : A → C) (g : B → C) (h : A → B) 
 *)
 Lemma lem94a {A B X : UU} {f : A → X} {g : B → X} {h : A → B}
   (H : comm_triangle f g h) (s : has_section h) :
-  (comm_triangle g f (pr1 s)) ×
-    ((has_section f → has_section g) × (has_section g → has_section f)).
+  (comm_triangle g f (pr1 s)) × (has_section f <-> has_section g).
 Proof.
   Admitted.
 
@@ -242,10 +241,10 @@ Proof.
   apply prop_thm.
   intros leq1 leq2.
   apply prod_eq.
-  - apply funextsec.
+  - apply prop_commutes_Π.
     intro p.
     apply (pr2 Q).
-  - apply funextsec.
+  - apply prop_commutes_Π.
     intro q.
     apply (pr2 P).
 Qed.

@@ -1,0 +1,208 @@
+\documentclass[10pt]{article}
+\usepackage{amssymb, amsthm, amsmath}
+\usepackage{tikz-cd}
+\usepackage[shortlabels]{enumitem}
+
+\input{../latex_macros}
+\newtheorem{exercise}{Exercise}
+
+\title{Homotopy Type Theory 2023-2024\\
+       Assignment 2
+      }
+\date{\today}
+\author{George Magafossis \\
+University of Amsterdam \\
+UvA id: 14686996 \\
+\texttt{george.magkafosis@student.uva.nl}}
+
+\begin{document}
+
+\maketitle
+
+\begin{exercise}
+Show that the definitions of proposition are equivalent.
+That is, for all types $P$ in the universe, we need
+to construct a term of type
+\[
+ (\isaprop P) \simeq (\prod x, y : P, x = y)
+\]
+\begin{proof}
+We first require to create a function from proofs
+of $\isaprop$ to proofs of $\prod x, y : P, x = y$.
+So, we assume we have a term $\mathtt{pProp}
+: \isaprop P$ and also that we have two terms
+$x, y : P$. We need to show that they are equal,
+i.e there exists a term of type $x = y$. From the
+fact that $P$ is a prop we particularly get that
+the type $x = y$ is contractible. So, inhabited.
+We call this function
+\[
+ f : (\isaprop P) \to \prod x, y : P, x = y
+\]
+
+In order to create a homotopy inverse we introduce
+the following lemma: If $H : \prod x, y : P, x = y$
+holds and $P$ is inhabited (by say $p : P$), then
+$P$ is contractible. The proof is easily given by
+the pair $(p, H p)$, i.e $P$ is inhabited and all
+terms are equal with the inhabitant that we present.
+Now, we can create the inverse
+\[
+ g : \prod x, y : P, x = y \to (\isaprop P)
+\]
+Assume we have a proof $H$ of $\prod x, y : P, x = y$.
+Then, in order to show that $P$ is a prop we show that
+for any $x, y : P$ the type $x = y$ is contractible.
+Since we have in our hypothesis an inhabitant of
+$P$ (that is $x : P$), we can apply the previous
+lemma to get that $P$ is contractible. By applying the
+cumulativity of hlevels we get that it is also
+a proposition.
+
+Now, we have to show that $f, g$ are homotopy
+inverses. If we assume that we have a term
+$p : \isaprop P$, then $p, g (f p) : \isaprop P$.
+Since for all $n$ the types $\isofhlevel n \; P$
+are propositions the type $p = g (f p)$
+is contractible. So, in particular inhabited.
+Conversely, if we assume $H : \prod x, y : P, x = y$
+then we need a term of $f (g H) = H$. Since
+this is a function type we can apply the
+function extensionality axiom. So, we need to show
+that $(f (g H)) \; x \; y = H \; x \; y$ holds for all $x, y : H$.
+By $H$ we can get $g H : \isaprop P$. Again, from
+the cumulative hierarchy of hlevels we get that
+$P$ is also a set. As a result any two proofs
+of equality of $x, y : P$ are equal. That is,
+there exists a term of type $(f (g H)) \; x \; y = H \; x \; y$.
+This concludes the proof.
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+For any two propositions $P, Q$ we have that
+homotopy equivalence is logicaly equivalent to their
+logical equivalence. That is
+\[
+ (P \simeq Q) \iff (P \iff Q)
+\]
+\begin{proof}
+In order to prove this we need to construct to
+functions with signatures $(P \simeq Q) \to (P \iff Q)$
+and $(P \iff Q) \to (P \simeq Q)$.
+
+For the first
+one we assume that the two propositions
+are equivalent, i.e there exists a function
+$f : P \to Q$ which is a equivalence. So, in
+order to prove $P \iff Q$ we need two functions
+with signatures $P \to Q$ and $Q \to P$. For
+the first one we can provide exactly
+$f : P \to Q$. For the second one, if we suppose
+that we have a term $q : Q$ from the fact that
+$f : P \to Q$ is an equivalence we can get that
+its fiber is contractible. So, in particular
+there exists a term $p : P$ such that $f p = q$.
+We can choose $p$ to be the image of $q$.
+
+For the second function $(P \iff Q) \to (P \simeq Q)$
+we assume that we have $P \iff Q$. That means
+that we get two functions $f : P \to Q$ and
+$g : Q \to P$. We need to show that they are
+homotopy inverses of each other. To that end, we
+need $g (f p) = p$ for all $p : P$ and $f (g q) = q$
+for all $q : Q$. But these types are contractible
+by the assumption that $P, Q$ are propositions.
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Show that the dependent product type former
+commutes with $\isaprop$.
+\begin{proof}
+Assume that we have a type family $B$ depending
+over a type $A$ and a dependent function
+$p: \prod x : A, \isaprop (B x)$. We need to show
+that the type $\prod x : A, (B x)$ is a proposition.
+So, we assume that we have two dependent functions
+$f, f' : \prod x : A, (B x)$ and we need to prove
+that $f = f'$. We can apply function extensionality.
+So, we need to show that $f x = f' x$ for any $x : A$.
+But this follows from the fact that $B (x)$ is
+a proposition, witnessed by $p x : \isaprop (B x)$.
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Show that $\isweq f$ (is-contr f in Rijke) is a
+proposition.
+\begin{proof}
+By the first exercise it suffices to show
+that for any two proofs $s, t : \isweq f$,
+we have $s = t$. A proof of $\isweq$
+provides for any term $y : B$ in the codomain
+of $f$, a proof that its type of
+fibers is contractible. So, we can use
+function extensionality and try to prove
+that $s y = t y$. Since the type
+$\iscontr (\hfiber f y)$ is the type of proofs
+that a type has 0 hlevel, we get that it is a
+proposition. So, the type $s y = t y$ is
+contractible, hence inhabited.
+\end{proof}
+\end{exercise}
+
+\begin{exercise}
+Show that an equivalence between propositions
+is (equivalent to) a logical equivalence.
+\begin{proof}
+Assume that we have two propositions $P, Q$.
+From the second exercise we get that
+\[
+ (P \simeq Q) \iff (P \iff Q)
+\]
+That means that we get automatically two
+functions $f : (P \simeq Q) \to (P \iff Q)$
+and $g : (P \iff Q) \to (P \simeq Q)$. We
+need to show that these are homotopy
+inverses of each other.
+We can show that the types $P \simeq Q$
+and $P \iff Q$ are also propositions.
+From that it follows that $g (f e) = e$
+for all $e : (P \simeq Q)$ and that
+$f (g e) = e$ for all $e : (P \iff Q)$.
+
+So, we need to show that $P \simeq Q$
+and $P \iff Q$ are propositions. For,
+the first one by applying the first
+exercise we need to show that for any
+two $e, e' : P \simeq Q$ we have that
+$e = e'$. Since $P \simeq Q$ is the sigma type
+$\sum f : P \to Q, \isweq f$, and $\isweq f$
+is a proposition (by previous exercise)
+we get that we only need the underlying
+functions of $e$ and $e'$ to be equal. By
+previous exercise (dependent product commutes with $\isaprop$)
+the function type $P \to Q$ is a proposition,
+because $Q$ is a proposition. So, we get that
+$e = e'$.
+
+In order to prove that $P \iff Q$ is a proposition,
+again we use the second exercise. That means that
+we assume that we have two different terms of
+$P \iff Q$ and we want to show that they are equal.
+Since $P \iff Q$ is a product type, we can show
+that the two terms are equal componentwise.
+So, for any two logical equivalences $e, e' : P \iff Q$
+we need to show that $\pi_1 e = \pi_1 e'$
+and $\pi_2 e = \pi_2 e'$. Since, $\prod$
+commutes with $\isaprop$ and both $P, Q$ are
+propositions we have that the function types
+$P \to Q$ and $Q \to P$ are also propositions.
+So, we get the required equalities.
+
+\end{proof}
+\end{exercise}
+
+
+\end{document}
