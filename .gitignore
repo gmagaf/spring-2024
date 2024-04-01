@@ -1,0 +1,18 @@
+# LaTeX specific
+
+*.aux
+*.fls
+*.log
+*.fdb_latexmk
+*.bbl
+*.blg
+*.toc
+*.tof
+*.spl
+*.nav
+*.vrb
+*.snm
+*.out
+_minted-*/
+
+*.pdf
