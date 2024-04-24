@@ -1,0 +1,200 @@
+\documentclass[10pt]{article}
+\usepackage{amssymb, amsthm, amsmath}
+\usepackage{tikz-cd}
+\usepackage[shortlabels]{enumitem}
+
+\input{../latex_macros}
+\newtheorem{exercise}{Exercise}
+
+\title{Homotopy Type Theory 2023-2024\\
+       Assignment 3
+      }
+\date{\today}
+\author{George Magafossis \\
+University of Amsterdam \\
+UvA id: 14686996 \\
+\texttt{george.magkafosis@student.uva.nl}}
+
+\theoremstyle{definition}
+\newtheorem*{definition*}{Definition}
+
+\newcommand{\mor}{\text{mor}}
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\I}{\mathbb{I}}
+\renewcommand{\comp}{\mathbin{\circ}}
+
+% Diagram
+\newsavebox{\pullback}
+\sbox\pullback{
+\begin{tikzpicture}
+\draw (0,0) -- (1ex,0ex);
+\draw (1ex,0ex) -- (1ex,1ex);
+\end{tikzpicture}}
+
+\begin{document}
+
+\maketitle
+
+\begin{exercise}
+Consider the category $G$ of groupoids, and the class
+$\D \subseteq \mor(G)$ of isofibrations.
+Show that this is a display map category, and that it
+has the two additional properties required of a display
+map category. That is, show that:
+\begin{enumerate}[i)]
+ \item every $X \to \star$ is a display map
+ \item $\D$ is closed under isomorphisms
+ \item $\D$ is stable under pullback
+ \item $\D$ contains all isomorphisms
+ \item $\D$ is closed under composition
+\end{enumerate}
+
+\begin{proof}
+We have the following definition of isofibrations:
+\begin{definition*}
+An isofibration is a functor $p : E \to B$
+such that for any object $x$ in $E$ and any
+isomorphism $g : p(x) \to y$ in $B$, there exists
+an iso $f : x \to x'$ in $E$ such that $p(f) = g$.
+\end{definition*}
+This is equivalent to the following: For any
+solid commutative square
+\[
+ \begin{tikzcd}
+  \star \dar["0"'] \rar["x"] & E \dar["p"] \\
+  \I \rar["g"] \ar[ur, dashed, "f"] & B
+ \end{tikzcd}
+\]
+there exists a lift $f : \I \to E$ making
+the two triangles commute. Here, $\I$ is
+the free iso groupoid, i.e a category with
+two objects and an iso between them.
+
+\begin{enumerate}[i)]
+ \item Suppose that we have the following
+ commutative square:
+ \[
+  \begin{tikzcd}
+   \star \dar["0"'] \rar["x"] & X \dar["!"] \\
+   \I \rar["g"] & \star
+  \end{tikzcd}
+ \]
+ Then, from the universal property of $\star$
+ we know that $g = !$, i.e it is the unique
+ functor sending all objects to the only object
+ of $\star$ and all morphisms to the identity
+ morphism in $\star$. So, we can lift $g$ to
+ the identity morphism of $x$ in $E$.
+ This is an iso with domain $x$ and gets
+ mapped by $! : X \to \star$ to the identity
+ morphism in $\star$. So, it makes both triangles
+ commute.
+ 
+ \item Suppose we have the following situation,
+ where the square commutes and $\phi : E' \to E$,
+ $\psi : B' \to B$ are isos of groupoids.
+ \[
+  \begin{tikzcd}
+   E' \dar["p'"'] \rar["\phi"] & E \dar["p"] \\
+   B' \rar["\psi"] & B
+  \end{tikzcd}
+ \]
+ We need to show that if $p$ is an isofibration,
+ then so is $p'$. For that we assume that we have
+ a lifting problem as before (left square):
+ \[
+  \begin{tikzcd}
+   \star \dar["0"'] \rar["x"] & E' \dar[very near start, "p'"'] \rar["\phi"] & E \dar["p"] \\
+   \I \rar["g"'] \ar[urr, dashed, near start, "f"] & B' \rar["\psi"'] & B
+  \end{tikzcd}
+ \]
+ Then, the outer square defines a lifting problem
+ for $\psi(g)$. Since functors preserve isos,
+ $\psi(g)$ is an iso. From the fact that $p$
+ is an isofibration, there exists a lift
+ $f : \I \to E$ such that the domain of $f$
+ is $\phi(x)$ and $p(f) = \psi(g)$. The morphism
+ $\phi^{-1}(f)$ is again an iso in $E'$. Its
+ domain is $\phi^{-1}(\phi(x)) = x$ and
+ it gets mapped by $p'$ to
+ \[
+  p'(\phi^{-1}(f)) = \psi^{-1}(p(f)) = \psi^{-1}(\psi(g)) = g
+ \]
+ That means that $\phi^{-1}(f)$ lifts $g$. So,
+ $p'$ is an isofibration.
+ 
+ \item Suppose that we have the following
+ pullback square
+ \[
+  \begin{tikzcd}
+   Q \dar["q"] \rar["H"] \arrow[dr, "\usebox\pullback", phantom, very near start, color=black] & E \dar["p"] \\
+   C \rar["F"] & B
+  \end{tikzcd}
+ \]
+ where $p$ is an isofibration. We need to show
+ that $q$ is also an isofibration.
+ Suppose that we have the following lifting problem
+ (left square):
+ \[
+  \begin{tikzcd}
+   \star \dar["0"'] \rar["x"] & Q \dar["q"'] \rar["H"] \arrow[dr, "\usebox\pullback", phantom, very near start, color=black] & E \dar["p"] \\
+   \I \rar["g"'] \ar[urr, dashed, bend right=10, near start, "f"] \ar[ur, dashed, near start, "k"] & C \rar["F"] & B
+  \end{tikzcd}
+ \]
+ From the fact that $p$ is an isofibration,
+ there exists an iso $f : H(x) \to e$
+ such that $p(f) = F(g)$. From the universal
+ property of the pullback we get that there
+ exists a unique functor $k : \I \to Q$ such
+ that $H \comp k = f$ and $q \comp k = g$.
+ We claim that $k$ is the required lifting.
+ Since $k$ gets mapped to $g$ by $q$ we only
+ need to verify that the domain of $k$ is $x$.
+ This follows again from the universal property
+ of the pullback. We can show that the domain
+ of $H(k)$ is the domain of $f$, i.e $H(x)$,
+ and the domain of $q(k)$ is the domain of $g$.
+ From the uniqueness of $x : \star \to Q$
+ we have that $x = 0 \comp k : \star \to Q$.
+ This means that the domain of $k$ is $x$.
+ 
+ \item Suppose that we have an iso $p : E \to B$.
+ Then, for any object $x$ in $E$ and any
+ isomorphism $g : p(x) \to y$, the morphism
+ $p^{-1}(g) : x \to p^{-1}(y)$, which is an
+ iso, gets mapped to $g$ by $p$.
+ 
+ \item Suppose that $p : E \to B$ and
+ $q : C \to E$ are two composable isofibrations
+ and that we have the following lifting problem
+ (solid square):
+ \[
+  \begin{tikzcd}
+   \star \rar["x"] \ar[dd, "0"'] & C \dar["q"] \\
+    & E \dar["p"] \\
+   \I \ar[ur, dashed, "f"] \rar["g"] & B
+  \end{tikzcd}
+ \]
+ From the fact that $p$ is an isofibration,
+ there exists a lift $f : \I \to E$ such
+ that $p(f) = g$ with domain $q(x)$.
+ This defines a new lifting problem:
+ \[
+  \begin{tikzcd}
+   \star \rar["x"] \dar["0"'] & C \dar["q"] \\
+   \I \rar["f"] \ar[ur, dashed, "h"] & E
+  \end{tikzcd}
+ \]
+ which has a solution $h : \I \to C$ such that
+ $q(h) = f$, with domain $x$. This is a solution
+ to the initial problem since $p(q(h)) = p(f) = g$.
+ So, the composition $p \comp q$ is an
+ isofibration as well.
+\end{enumerate}
+
+\end{proof}
+
+\end{exercise}
+
+
+\end{document}
