@@ -1,0 +1,530 @@
+\documentclass{article}
+
+\usepackage{amsthm,amsfonts}
+\usepackage{mathpartir}
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+\usepackage{hyperref,cleveref}
+\usepackage{color,soul}
+\usepackage{mathabx}
+\usepackage{enumerate}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+% \theoremstyle{theorem}
+\newtheorem{theorem}[definition]{Theorem}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem{corollary}[definition]{Corollary}
+\newtheorem{problem}[definition]{Problem}
+\newtheorem{exercise}[definition]{Exercise}
+\newtheorem{example}[definition]{Example}
+
+\newenvironment{construction}{\begin{proof}[Construction]}{\end{proof}}
+
+
+
+\newcommand{\types}{\mathcal T}
+\newcommand{\type}{\ \textsc{type}}
+\newcommand{\terms}{\mathcal S}
+\newcommand{\contexts}{\mathcal C}
+\newcommand{\context}{\textsc{ctx}}
+\newcommand{\T}{\mathbb T}
+\newcommand{\C}{\mathcal C}
+\newcommand{\D}{\mathcal D}
+\newcommand{\A}{\mathcal A}
+\newcommand{\M}{\mathcal M}
+\newcommand{\W}{\mathcal W}
+\newcommand{\F}{\mathcal F}
+\newcommand{\Set}{{\mathcal S}et}
+\newcommand{\syncat}[1]{\C [#1]}
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\interp}[1]{\lceil #1 \rceil}
+\newcommand{\seq}{\doteq}
+\newcommand{\lists}{\mathcal Lists}
+\newcommand{\variables}{\mathcal Var}
+\newcommand{\Epsilon}{\mathrm E}
+\newcommand{\Zeta}{\mathrm Z}
+\newcommand{\mor}{\mathrm {mor}}
+\newcommand{\op}{\mathrm {op}}
+\newcommand{\grpd}{\mathcal G}
+\newcommand{\Id}{\mathtt {Id}}
+\newcommand{\Path}{\mathrm {Path} \ }
+
+\newcommand{\twist}{\mathrm{tw}}
+\newcommand{\pr}{\mathrm{pr}}
+\newcommand{\pair}[2]{\langle #1,#2\rangle}
+\newcommand{\comp}{\mathbin{\circ}}
+\newcommand{\sym}{\mathrm{sym}}
+\newcommand{\conc}{\mathrm{conc}}
+\newcommand{\idarrow}[1][]{\mathrm{id}_{#1}}
+\newcommand{\opF}[1]{{#1}^{\mathrm{op}}}
+
+
+
+\tikzset{pullbackcorner/.style={minimum size=1.2ex,path picture={
+\draw[opacity=1,black,-,#1] (-0.5ex,-0.5ex) -- (0.5ex,-0.5ex) -- (0.5ex,0.5ex);%
+}}}
+
+\newcommand{\pullback}{\arrow[dr, phantom, "" {pullbackcorner} , very near start]}
+
+
+
+\title{Homotopy Type Theory 2023-2024\\
+       Assignment 4
+      }
+\date{\today}
+\author{George Magafossis \\
+University of Amsterdam \\
+UvA id: 14686996 \\
+\texttt{george.magkafosis@student.uva.nl}}
+
+\begin{document}
+
+\maketitle
+
+\noindent\textbf{Problem 1.} Show the following.
+
+\begin{lemma}
+    \label{lem:equivalence relation}
+    Nice path objects give reflexive and symmetric relations. \\
+    If there are classes of morphisms $\mathcal L, \mathcal R$ such that
+    \begin{enumerate}[(1)]
+     \item each $r_A \in \mathcal L$
+     \item each $\epsilon_A \in \mathcal R$
+     \item $\mathcal R$ is stable under pullback and closed under composition
+     \item $\mathcal L$ is stable under pullback along $\mathcal R$
+     \item each morphism to the terminal object is in $\mathcal R$
+     \item $\mathcal L \boxslash \mathcal R$
+    \end{enumerate}
+    then we get an equivalence relation.
+\end{lemma}
+\begin{proof}
+To prove that the path object
+$P A$ of an object $A$ is an equivalence
+relation in $A$ we need to show that it
+is reflexive, symmetric and transitive.
+
+To show that it is reflexive we need
+to prove that the diagonal map $A \to
+A \times A$ factors through $PA$.
+That means that there exists
+a map $A \to PA$ such that the
+following diagram commutes:
+\[
+ \begin{tikzcd}
+  A \ar[rr, "\delta"] \ar[dr, dashed, "r_A"] & & A \times A \\
+  & PA \ar[ur, "\epsilon_B"] &
+ \end{tikzcd}
+\]
+This holds for $r_A$ by definition
+of a path object.
+
+To show that it is symmetric we need
+to prove that the map
+\[
+ PA \xrightarrow{\epsilon_A} A \times A \xrightarrow{\twist} A \times A
+\]
+factors through $PA$, as before.
+Here $\twist$ is given by $\pair{\pr_1}{\pr_0} : A \times A \to A \times A$.
+We consider the following lifting problem
+\[
+ \begin{tikzcd}
+  A \ar[rr, "r_A"] \dar{r_A} & & PA \dar["\epsilon_A"] \\
+  PA \ar[urr, dashed, "\sym"] \rar["\epsilon_A"'] & A \times A \rar["\twist"'] & A \times A
+ \end{tikzcd}
+\]
+This is indeed a lifting problem since
+$\twist \comp \epsilon_A \comp r_A = \twist \comp \delta = \delta = \epsilon_A \comp r_A$. Since
+$r_A \in \mathcal{L}$ from (1), $\epsilon_A \in \mathcal{R}$
+from (2) and $\mathcal{L} \boxslash \mathcal{R}$
+from (6) we get that there exists
+a solution $\sym : PA \to PA$. The commutativity
+of the lower triangle is what we wanted.
+
+To show that this is transitive, we create
+the object of all ``composable'' paths as the
+following pullback. Here,
+we will use $s \defeq \pr_0 \epsilon_A$
+and $t \defeq \pr_1 \epsilon_A$.
+\[
+ \begin{tikzcd}
+  PA \times_A PA \dar \rar & PA \dar["s"] \\
+  PA \rar["t"] & A
+ \end{tikzcd}
+\]
+To show that $PA$ is transitive we need to
+prove that the arrow
+\[
+ \pair{s \comp \pr_0}{t \comp \pr_1} : PA \times_A PA \to A \times A
+\]
+factors through $PA$. To do so,
+we form the following square:
+\[
+ \begin{tikzcd}[column sep=large]
+  A \rar["r_A"] \dar["\pair{r_A}{r_A}"'] & PA \dar["\epsilon_A"] \\
+  PA \times_A PA \rar["\pair{s \comp \pr_0}{t \comp \pr_1}"'] & A \times A
+ \end{tikzcd}
+\]
+This commutes because
+$\pair{s \comp \pr_0}{t \comp \pr_1} \comp \pair{r_A}{r_A} =
+\pair{s \comp r_A}{t \comp r_A} = \epsilon_A \comp r_A$.
+We know that $\epsilon_A \in \mathcal{R}$ from (2).
+If we prove that $\pair{r_A}{r_A} \in \mathcal{L}$,
+then we get the required factorization through
+$PA$.
+
+
+We will prove this in the following way:
+We will show that
+\begin{align*}
+ \pair{r_A}{\idarrow[A]} : A \to PA {}_{t}\times_{\idarrow[A]} A \in \mathcal{L} \\
+ \idarrow[PA] \times r_A : PA_t \times_{\idarrow[A]} A \to PA \times_A PA \in \mathcal{L}
+\end{align*}
+Then, we get $\pair{r_A}{r_A} = (\idarrow[PA] \times r_A) \comp \pair{r_A}{\idarrow[A]}$
+\[\begin{tikzcd}
+	A \\
+	& {PA {}_t\times_{\idarrow[A]} A} \pullback & A \\
+	& PA & A & {PA {}_t\times_s PA} \pullback & PA \\
+	&&& PA & A
+	\arrow["{\pair{r_A}{\idarrow[A]}}", from=1-1, to=2-2]
+	\arrow["\idarrow", bend left=20, from=1-1, to=2-3]
+	\arrow["{r_A}"', bend right=20, from=1-1, to=3-2]
+	\arrow[from=2-2, to=2-3]
+	\arrow[from=2-2, to=3-2]
+	\arrow["\idarrow \times r_A", near end, bend left=10, from=2-2, to=3-4]
+	\arrow["\idarrow", from=2-3, to=3-3]
+	\arrow["{r_A}", bend left=20, from=2-3, to=3-5]
+	\arrow["t", from=3-2, to=3-3]
+	\arrow["\idarrow"', bend right=20, from=3-2, to=4-4]
+	\arrow[from=3-4, to=3-5]
+	\arrow[from=3-4, to=4-4]
+	\arrow["s", from=3-5, to=4-5]
+	\arrow["t"', from=4-4, to=4-5]
+\end{tikzcd}\]
+from the commutativity of the above diagrams.
+Also, we can prove  that
+$\pair{r_A}{r_A} \in \mathcal{L}$
+since $\mathcal{L}$ is closed under composition.
+Indeed, if $a, b$ are composable and in
+$\mathcal{L}$ then for any $f \in \mathcal{R}$
+we can find a lift to the following
+problem:
+\[\begin{tikzcd}
+	\bullet & \bullet \\
+	\bullet \\
+	\bullet & \bullet
+	\arrow[from=1-1, to=1-2]
+	\arrow["a"', from=1-1, to=2-1]
+	\arrow["f", from=1-2, to=3-2]
+	\arrow[dashed, from=2-1, to=1-2]
+	\arrow["b"', from=2-1, to=3-1]
+	\arrow[dashed, from=3-1, to=1-2]
+	\arrow["h"', from=3-1, to=3-2]
+\end{tikzcd}\]
+by first lifting $h \comp b$ and then
+solving the lifting problem given by
+the created lower square. The last
+lift can be easily proven to be a solution
+to the initial lifting problem.
+
+To show that $\pair{r_A}{\idarrow[A]}$
+is in $\mathcal{L}$ we will prove that
+\[\begin{tikzcd}
+	A & A \\
+	{PA {}_t\times_{\idarrow[A]} A} & PA
+	\arrow["\idarrow", from=1-1, to=1-2]
+	\arrow["{\pair{r_A}{\idarrow}}"', from=1-1, to=2-1]
+	\arrow["{r_A}", from=1-2, to=2-2]
+	\arrow["\pr_0"', from=2-1, to=2-2]
+\end{tikzcd}\]
+is a pullback square. The square commutes
+by definition and since the top arrow is
+an identity, it has the universal property
+of a pullback. $\pr_0$ is the pullback of
+$\idarrow[A]$ along $t$. It is easy
+to show that $\idarrow \in \mathcal{R}$, so
+by (3) we get that $\pr_0 \in \mathcal{R}$.
+From (4) we get that $\pair{r_A}{\idarrow} \in \mathcal{R}$.
+
+We do the same for the square
+\[\begin{tikzcd}
+    X \ar[drr, bend left=15, "f"] \ar[ddr, bend right=15, "g"'] \ar[dr, dashed, "\pair{\pr_0 \comp g}{f}"]& & \\
+	& {PA {}_t\times A} & A \\
+	& {PA {}_t\times_{s} P A} & PA
+	\arrow["\pr_1", from=2-2, to=2-3]
+	\arrow["{\idarrow \times r_A}", from=2-2, to=3-2]
+	\arrow["{r_A}", from=2-3, to=3-3]
+	\arrow["\pr_1"', from=3-2, to=3-3]
+\end{tikzcd}\]
+Again, the square commutes by definition.
+Suppose we have two arrows $f : X \to A$
+and $g : X \to {PA {}_t\times_{s} P A}$
+such that $r_A \comp f = \pr_1 \comp g$.
+Then the arrow $\pair{\pr_0 \comp g}{f}$
+makes the two triangles commute:
+\begin{align*}
+ & \pr_1 \comp \pair{\pr_0 \comp g}{f} = f \\
+ & (\idarrow \times r_A) \comp \pair{\pr_0 \comp g}{f} = \pair{\pr_0 \comp g}{r_A \comp f} = \pair{\pr_0 \comp g}{\pr_1 \comp g} = g
+\end{align*}
+Additionally, for any other
+$\pair{h_0}{h_1} : X \to PA {}_t\times A$
+making the triangles commute we get
+that
+\begin{align*}
+ & \pr_1 \comp \pair{h_0}{h_1} = f \implies h_1 = f \\
+ & (\idarrow \times r_A) \comp \pair{h_0}{h_1} = g \implies h_0 = \pr_0 \comp g
+\end{align*}
+So, $\pair{\pr_0 \comp g}{f}$ is unique
+with such property. Hence the square
+is a pullback.
+
+We have that $\pr_1$ is the pullback
+of $t$ along $s$. Since $\mathcal{R}$
+is closed under pullbacks by (3)
+and every arrow to the terminal object is
+in $\mathcal{R}$ by (5), we get that
+Cartesian projections are in $\mathcal{R}$.
+Since $\epsilon_A \in \mathcal{R}$
+and $\mathcal{R}$ is closed under composition,
+we get that $t \in \mathcal{R}$. So,
+$\pr_1 \in \mathcal{R}$ from (3). Since
+the above square is a pullback of $r_A \in \mathcal{L}$
+along $\pr_1 \in \mathcal{R}$, from (4)
+we get that $\idarrow \times r_A \in \mathcal{L}$
+\end{proof}
+
+
+\noindent\textbf{Problem 2.} Show the following.
+
+\begin{lemma}
+    \label{lem:factorization}
+    Consider a weak factorization system $(\mathcal L, \mathcal R)$ on a category $\C$. We have that $\mathcal L$ is the class of all maps $f: X \to Y$ for which the following lifting problem has a solution.
+    \[
+         \begin{tikzcd}
+             X \ar[r,"\lambda_f"] \ar[d,"f"] & Mf \ar[d,"\rho_f"]
+             \\ 
+             Y \ar[r,equal] & Y
+         \end{tikzcd}
+         \tag{$*$}
+    \]
+
+    Dually, $\mathcal R$ is the class of all maps $f: X \to Y$ for which the following lifting problem has a solution.
+    \[
+         \begin{tikzcd}
+             X \ar[r,equal] \ar[d,"\lambda_f"] & X \ar[d,"f"]
+             \\ 
+             Mf \ar[r,"\rho_f"] & Y
+         \end{tikzcd}
+         \tag{$**$}
+    \]
+\end{lemma}
+\begin{proof}
+We need to show that
+$\mathcal{L} = \{f : \begin{tikzcd}
+                      X \ar[r,"\lambda_f"] \ar[d,"f"] & Mf \ar[d,"\rho_f"] \\
+                      Y \ar[r,equal] & Y
+                     \end{tikzcd}
+ \text{ has a solution}\}$.
+Suppose that we have $f \in \mathcal{L}$.
+Then $f \boxslash \rho f$ since $\rho f \in \mathcal{R}$.
+For the converse, suppose we have
+$f :X \to Y$ such that the above square has a
+solution:
+\[
+ \begin{tikzcd}
+  X \ar[r,"\lambda_f"] \ar[d,"f"] & Mf \ar[d,"\rho_f"] \\
+  Y \ar[r,equal] \ar[ur, dashed, "k"] & Y
+\end{tikzcd}
+\]
+and we are given a lifting problem:
+\[
+ \begin{tikzcd}
+  X \rar["\tau"] \dar["\lambda f"'] & Z \ar[dd, "g \in \mathcal{R}"] \\
+  M f \dar["\rho f"'] \ar[ur, dashed, "h"] & \\
+  Y \rar["\sigma"] \ar[uur, dashed, "h \comp k"'] & W
+ \end{tikzcd}
+\]
+Since $\lambda f \in \mathcal{L}$
+we can find a lift $h$ of $\sigma \comp \rho f$
+against $g$. We can create a solution
+$h \comp k : Y \to Z$. Indeed,
+we have that
+\begin{align*}
+ g \comp h \comp k = \sigma \comp \rho f \comp k = \sigma \comp \idarrow[Y] = \sigma \\
+ h \comp k \comp f = h \comp \lambda f = \tau
+\end{align*}
+
+We apply the same idea for proving
+that
+\[
+ \mathcal{R} = \{f: X \to Y : \text{the diagram $**$ has a solution}\}
+\]
+First, we assume that we have a morphism
+$f \in \mathcal{R}$. Since $\lambda f \in \mathcal{L}$
+we get that $\lambda f \boxslash f$. Hence,
+$**$ has a solution.
+
+Now, assume that we have $f : X \to Y$
+such that the diagram
+\[
+ \begin{tikzcd}
+    X \ar[r,equal] \ar[d,"\lambda_f"] & X \ar[d,"f"] \\
+    Mf \ar[r,"\rho_f"] \ar[ur, dashed, "k"] & Y
+ \end{tikzcd}
+\]
+has a lifting $k : M f \to X$ such that
+\begin{align*}
+ k \comp \lambda f = \idarrow[X] \\
+ f \comp k = \rho f
+\end{align*}
+In order to show that $f \in \mathcal{R}$
+we will prove that it has the right lifting
+property against any $m : A \to B \in \mathcal{L}$.
+So, we assume that we have the following
+lifting problem
+\[
+ \begin{tikzcd}
+  A \ar[dd, "m"] \rar["\tau"] & X \dar["\lambda f"] \\
+  & Mf \dar["\rho f"] \\
+  B \rar["\sigma"] \ar[ur, dashed, "h"] & Y
+ \end{tikzcd}
+\]
+Since $\rho f \in \mathcal{R}$ we get that
+$m \boxslash \rho f$. So, there exists a lift
+$h : B \to M f$ such that:
+\begin{align*}
+ \rho f \comp h = \sigma \\
+ h \comp m = \lambda f \comp \tau
+\end{align*}
+As a result, we can form a lifting to the initial
+problem. We observe that
+\begin{align*}
+ (k \comp h) \comp m = k \comp \lambda f \comp \tau = \tau \\
+ f \comp (k \comp h) = \rho f \comp h = \sigma
+\end{align*}
+So, $k \comp h : B \to X$ is a solution.
+Therefore, we can conclude that $f \in \mathcal{R}$.
+\end{proof}
+
+
+\newpage
+
+\noindent\textbf{Problem 3.} In about 250 words, explain both the advantages that cubical type theory holds over HoTT as well as the disadvantages.
+
+We can give the following review as a brief comparison
+between cubical type theories and HoTT. \\
+Advantages:
+\begin{enumerate}
+ \item Cubical Type Theories enjoy canonicity. That means
+ that we can prove the meta-theoretical fact that
+ any term of the type of natural numbers given in
+ the empty context is definitionally equal to
+ zero or to the $m$-times application of the successor
+ to zero for some meta-theoretic natural number $m$.
+ This is not the case for HoTT.
+ \item Cubical Type Theories are created by drawing
+ inspiration from their models in Cubical Sets.
+ These models are constructive. More precisely,
+ we can construct using Intuitionistic Logic
+ that CuTT has a model in cubical sets with
+ identity types, sigma, Pi types and a univalent
+ universe. This gives a computational meaning
+ in the axioms of HoTT such as the Univalence
+ axiom or function extensionality. On the contrary,
+ the model we have for HoTT in simplicial sets
+ is not constructive and so we cannot normalize
+ such terms.
+\end{enumerate}
+Disadvantages:
+\begin{enumerate}
+ \item There is not a canonical choice for a
+ category of cubes. This leads to various
+ models in different versions of Cubical sets,
+ like Cartesian, De Morgan and others.
+ Unfortunately, the model structures in these
+ models are not all Quillen equivalent to
+ the category of spaces. Instead, HoTT
+ is interpreted inside simplicial sets
+ with the Kan model structure, which is
+ Quillen equivalent to spaces.
+ \item Also, not all cubical type theories
+ are implemented in a proof assistant
+ whereas there are extensive libraries of
+ univalent foundations (HoTT) in Coq, Agda etc.
+\end{enumerate}
+Advantage or Disadvantage:
+\begin{itemize}
+ \item In Cubical type theories, the geometric
+ features are more explicit rather than HoTT.
+ In cubical type theories, judgments are usually
+ indexed by a first layer context of ``dimension''
+ variables, which is interpreted as a geometric
+ cube, a representable object in the category
+ of cubical sets. Additionally, one has to give
+ account of how types behave under the geometric
+ operations of cubes, in the form of composition
+ rules. A similar idea is applied with
+ glueing operations in the level of universes.
+ Finally, paths in CuTT are closer to the
+ intuitive idea we have for paths
+ as functions of the interval into a type.
+ All of the above geometric characteristics are
+ either missing or expressed in internally in HoTT.
+\end{itemize}
+
+\pagebreak
+
+\noindent\textbf{Problem 4.} In about 250 words, explain why defining higher categories in HoTT has thus far not been successful, and give some examples of extensions of HoTT that have been proposed to ameliorate these problems.
+
+We can give the following brief presentation 
+regarding the problem of defining higher categories
+in HoTT. There are many approaches to higher
+categories in classical mathematics. Most of
+them use set theory, for instance
+defining $(\infty, 1)$-categories inside
+simplicial sets. These approaches can be
+internalized inside any proof-assistant that
+can reason about set theory, and HoTT in
+particular.
+
+The issue arises when one tries to internalize
+Reszk's definition of $(\infty, 1)$-categories
+as simplicial spaces. We know that in HoTT,
+types are interpreted as spaces. However,
+these spaces are not organised in a 1-category,
+like the category of spaces, but in an
+$(\infty,1)$-category themselves. That means
+that if we create a functor
+$\opF{\Delta} \to \mathcal{U}$ it wouldn't be
+strict and the functor laws would hold up to
+higher homotopy. Furthermore, we are not
+able to extend the idea of univalent categories
+that we have for 1-categories. This works
+for defining $(n,1)$-categories, but it would
+require an infinite amount of data to
+witness all the coherence conditions of an
+$(\infty, 1)$-category.
+
+The solutions proposed are extending HoTT
+with various features that try to resolve this
+issue. The idea is to replicate the notion
+of Complete Segal Space, which is the version
+of simplicial spaces in bisimplicial sets.
+The first idea is to internalize a
+type of strict equality. This leads to Two-Level
+Type Theory which has two different equality
+types, one internal for which Univalence axiom
+holds and one external for which we have UIP.
+We can import the notion of Complete Segal
+Spaces in 2LTT. Another idea, comes from the
+Riehl-Schulmann type theory. This is very similar
+to cubical type theories, in which we index
+our HoTT judgments by a layer of cubes, which
+can be restricted to simplicies. With suitable
+conditions, we can define Segal types and
+Rezk types which can be interpreted as Segal
+spaces and complete Segal spaces. Finally,
+other approaches suggest altering the notion
+of Identity types to directed equality types.
+\end{document}
