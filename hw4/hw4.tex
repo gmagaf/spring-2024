@@ -142,14 +142,14 @@ from (6) we get that there exists
 a solution $\sym : PA \to PA$. The commutativity
 of the lower triangle is what we wanted.
 
-To show that this is transitive, we create
+To show that it is transitive, we create
 the object of all ``composable'' paths as the
 following pullback. Here,
 we will use $s \defeq \pr_0 \epsilon_A$
 and $t \defeq \pr_1 \epsilon_A$.
 \[
  \begin{tikzcd}
-  PA \times_A PA \dar \rar & PA \dar["s"] \\
+  PA \times_A PA \dar \rar \pullback & PA \dar["s"] \\
   PA \rar["t"] & A
  \end{tikzcd}
 \]
@@ -337,7 +337,7 @@ solution:
   Y \ar[r,equal] \ar[ur, dashed, "k"] & Y
 \end{tikzcd}
 \]
-and we are given a lifting problem:
+and we are given a lifting problem (solid diagram):
 \[
  \begin{tikzcd}
   X \rar["\tau"] \dar["\lambda f"'] & Z \ar[dd, "g \in \mathcal{R}"] \\
@@ -410,7 +410,7 @@ Therefore, we can conclude that $f \in \mathcal{R}$.
 
 \newpage
 
-\noindent\textbf{Problem 3.} In about 250 words, explain both the advantages that cubical type theory holds over HoTT as well as the disadvantages.
+\noindent\textbf{Problem 3.} In about 250 words, explain both the advantages that cubical type theory has over HoTT as well as the disadvantages.
 
 We can give the following review as a brief comparison
 between cubical type theories and HoTT. \\
@@ -438,7 +438,7 @@ Advantages:
 \end{enumerate}
 Disadvantages:
 \begin{enumerate}
- \item There is not a canonical choice for a
+ \item There is not one canonical choice for a
  category of cubes. This leads to various
  models in different versions of Cubical sets,
  like Cartesian, De Morgan and others.
@@ -470,7 +470,7 @@ Advantage or Disadvantage:
  intuitive idea we have for paths
  as functions of the interval into a type.
  All of the above geometric characteristics are
- either missing or expressed in internally in HoTT.
+ either missing or expressed internally in HoTT.
 \end{itemize}
 
 \pagebreak
