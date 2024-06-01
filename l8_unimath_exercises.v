@@ -223,3 +223,75 @@ Qed.
 (* Exercise 3 *)
 
 (* Define the type of categories and univalence for categories. *)
+
+Definition CatOb := UU.
+Definition CatHom (catOb : CatOb) := catOb → catOb → hSet : UU.
+Definition IdMor (catOb : CatOb) (hom : CatHom catOb) := ∏ c : catOb, hom c c.
+Definition CompMor (catOb : CatOb) (hom : CatHom catOb) :=
+  ∏ a b c : catOb, hom a b → hom b c → hom a c.
+Definition UnitLawR (ob : CatOb) (hom : CatHom ob) (id : IdMor ob hom) (comp : CompMor ob hom) :=
+  ∏ a b : ob, ∏ f : hom a b, comp a b b f (id b) = f.
+Definition UnitLawL (ob : CatOb) (hom : CatHom ob) (id : IdMor ob hom) (comp : CompMor ob hom) :=
+  ∏ a b : ob, ∏ f : hom a b, comp a a b (id a) f = f.
+Definition AssocLaw (ob : CatOb) (hom : CatHom ob) (id : IdMor ob hom) (comp : CompMor ob hom) :=
+  ∏ a b c d : ob, ∏ f : hom a b, ∏ g : hom b c, ∏ h : hom c d,
+  comp a b d f (comp b c d g h) = comp a c d (comp a b c f g) h.
+Definition pre_cat :=
+  ∑ ob : CatOb,
+  ∑ hom : CatHom ob,
+  ∑ id : IdMor ob hom,
+  ∑ comp : CompMor ob hom,
+  UnitLawR ob hom id comp × UnitLawL ob hom id comp × AssocLaw ob hom id comp : UU.
+
+Lemma ob (cat : pre_cat) : CatOb.
+Proof.
+  induction cat as [ob _].
+  exact ob.
+Defined.
+
+Lemma hom (cat : pre_cat) (a b : (ob cat)) : hSet.
+Proof.
+  induction cat as [ob [hom r]].
+  exact (hom a b).
+Defined.
+
+
+Definition is_isomor (cat : pre_cat) (a b : (ob cat)) (f : hom cat a b) : UU.
+Proof.
+  induction cat as [ob [hom [id [comp r]]]].
+  unfold CatHom in *.
+  simpl in a.
+  simpl in b.
+  exact (
+  ∑ g : hom b a,
+  comp a b a f g = id a × comp b a b g f = id b
+  ).
+Defined.
+
+Definition isomor (cat : pre_cat) (a b : (ob cat)) :=
+  ∑ f : hom cat a b, is_isomor cat a b f : UU.
+
+Definition id_to_iso (cat : pre_cat) (a b : (ob cat)) :
+    a = b → isomor cat a b.
+Proof.
+  intro p.
+  induction cat as [ob [hom [id [comp laws]]]].
+  induction p.
+  use tpair.
+  - exact (id a).
+  - use tpair.
+    + exact (id a).
+    + split.
+      * set (r := (pr1 laws)).
+        unfold UnitLawR in r.
+        exact (r a a (id a)).
+      * set (l := (pr1 (pr2 laws))).
+        unfold UnitLawL in l.
+        exact (l a a (id a)).
+Defined.
+
+Print isweq.
+Definition category :=
+  ∑ cat : pre_cat,
+  ∏ a b : (ob cat), isweq (id_to_iso cat a b) : UU.
+
