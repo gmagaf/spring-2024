@@ -132,14 +132,18 @@ Defined.
 Lemma isaprop_fun_eq : (∏ (A B : UU), ∏ (f g : A → B), (isaprop (∏ x : A, f x = g x)) → (isaprop (f = g))).
 Proof.
   intros A B f g homotProp.
-  apply invproofirrelevance.
-  intros p q.
-  Print transportf.
-  Print isofhlevel.
-  Search (∏ A B : UU, ∏ n : nat, (A ≃ B) → (isofhlevel n A) → (isofhlevel n B)).
-  apply (transportf isaprop (x := ∏ x : A, f x = g x)).
-  Search (∏ A B : UU, ∏ f g : A → B, (f = g) ≃ (f ~ g)).
-  Admitted.
+  Print isweqtoforallpathsUAH.
+  Check (isweqtoforallpathsUAH univalenceAxiom A (fun _ => B) f g).
+  assert (hyp : (f = g) = homot f g).
+  {
+    apply univalenceAxiom.
+    use tpair.
+    - apply (toforallpaths _ f g).
+    - exact (isweqtoforallpathsUAH univalenceAxiom A (fun _ => B) f g).
+  }
+  apply (transportf isaprop (!hyp)).
+  exact homotProp.
+Qed.
 
 Theorem prop_commutes_Π {A : UU} {B : A → UU} (p : ∏ x : A, isaprop (B x)) : isaprop (∏ x : A, (B x)).
 Proof.
